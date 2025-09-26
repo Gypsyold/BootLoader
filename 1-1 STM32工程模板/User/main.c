@@ -14,7 +14,7 @@ int main(void)
 	{
 		if(U0CB.URxDataOUT != U0CB.URxDataIN)
 		{
-			U0_printf("本次接收了%d字节数据\r\n",U0CB.URxDataOUT->end - U0CB.URxDataOUT->start + 1);
+			U0_printf("本次接收了%d字节数据\r\n",U0CB.URxDataOUT->end - U0CB.URxDataOUT->start + 1);	//数据长度 = 结束索引 - 开始索引 + 1
 			for(i = 0;i<U0CB.URxDataOUT->end - U0CB.URxDataOUT->start + 1;i++)
 			{
 				U0_printf("%c ",U0CB.URxDataOUT->start[i]);
