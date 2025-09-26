@@ -23,7 +23,7 @@ int main(void)
 			U0_printf("\r\n\r\n");
 			
 			U0CB.URxDataOUT ++;
-			if(U0CB.URxDataOUT == U0CB.URxDataEND)
+			if(U0CB.URxDataOUT >= U0CB.URxDataEND)
 			{
 				U0CB.URxDataOUT = &U0CB.URxDataPtr[0];
 			}

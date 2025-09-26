@@ -61,7 +61,7 @@ void U_DMA_Init(void)
     DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&USART1->DR;		// 外设地址
     DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)U0_RxBuff;		        // 内存地址
     DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;					    // 外设为数据源
-    DMA_InitStructure.DMA_BufferSize = U0_RX_MAX + 1;				        // 单次数据（DMA的 DMA_BufferSize 参数控制的是单次DMA传输能处理的数据量）+1通过增加1个字节，可以确保写指针永远不会追上读指针
+    DMA_InitStructure.DMA_BufferSize = U0_RX_SIZE;				            // 传输的数据单元数量
     DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;		// 外设地址不增
     DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;				    // 内存地址增
     DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;	// 数据宽度为8位
@@ -79,10 +79,15 @@ void U0Rx_PtrInit(void)
 {
     U0CB.URxDataIN  = &U0CB.URxDataPtr[0];
     U0CB.URxDataOUT = &U0CB.URxDataPtr[0];
-    U0CB.URxDataEND = &U0CB.URxDataPtr[NUM - 1];
+    U0CB.URxDataEND = &U0CB.URxDataPtr[NUM-1];
     U0CB.URxDataIN -> start = U0_RxBuff;
     U0CB.URxCounter = 0;
-
+    // // 初始化所有数据包管理结构
+    // for(int i = 0; i < NUM; i++)
+    // {
+    //     U0CB.URxDataPtr[i].start = U0_RxBuff;
+    //     U0CB.URxDataPtr[i].end = U0_RxBuff;
+    // }
 }
 
 
@@ -96,11 +101,18 @@ void USART1_IRQHandler(void)
         USART_GetFlagStatus(USART1,USART_FLAG_IDLE);    // 读取SR寄存器
         USART_ReceiveData(USART1);                      // 读取DR寄存器
         
-        U0CB.URxCounter += U0_RX_SIZE - DMA_GetCurrDataCounter(DMA1_Channel5);  // 计算接收到的数据长度(DMA总量 - DMA剩余的量)
-        U0CB.URxDataIN->end = &U0_RxBuff[U0CB.URxCounter - 1];
+        //错误写法
+        //U0CB.URxCounter += U0_RX_SIZE - DMA_GetCurrDataCounter(DMA1_Channel5);  // 计算接收到的数据长度(DMA总量 - DMA剩余的量)
+        // U0CB.URxDataIN->end = &U0_RxBuff[U0CB.URxCounter - 1];
+
+        uint16_t receivedBytes = U0_RX_SIZE - DMA_GetCurrDataCounter(DMA1_Channel5);  // 计算接收到的数据长度(DMA总量 - DMA剩余的量)
+        U0CB.URxDataIN->end = U0CB.URxDataIN->start + receivedBytes - 1;
+
+
+
         U0CB.URxDataIN ++;                              // 指针写入的时候指向下一个数据包
 
-        if(U0CB.URxDataIN == U0CB.URxDataEND)           // 如果写入指针指向了最后一个数据包，则指向第一个数据包
+        if(U0CB.URxDataIN >= U0CB.URxDataEND)           // 如果写入指针指向了最后一个数据包，则指向第一个数据包
         {
             U0CB.URxDataIN = &U0CB.URxDataPtr[0];
         }
@@ -117,8 +129,7 @@ void USART1_IRQHandler(void)
         }
 
         DMA_Cmd(DMA1_Channel5, DISABLE);  // 关闭DMA
-        DMA_SetCurrDataCounter(DMA1_Channel5, U0_RX_MAX + 1); 
-
+        DMA_SetCurrDataCounter(DMA1_Channel5, U0_RX_SIZE); 
         DMA_Cmd(DMA1_Channel5, ENABLE);  // 重新开启DMA
 
     }
