@@ -3,15 +3,15 @@
         {
             "name": "Target 1",
             "includePath": [
-                "e:\\Github_warehouse\\Boot_Loader\\1-1 串口DMA接收\\Start",
-                "e:\\Github_warehouse\\Boot_Loader\\1-1 串口DMA接收\\User",
-                "e:\\Github_warehouse\\Boot_Loader\\1-1 串口DMA接收\\Library",
-                "e:\\Github_warehouse\\Boot_Loader\\1-1 串口DMA接收\\Hardware\\Inc",
+                "e:\\Github_warehouse\\Boot_Loader\\1-2 模拟_IIC_24C02\\Start",
+                "e:\\Github_warehouse\\Boot_Loader\\1-2 模拟_IIC_24C02\\User",
+                "e:\\Github_warehouse\\Boot_Loader\\1-2 模拟_IIC_24C02\\Library",
+                "e:\\Github_warehouse\\Boot_Loader\\1-2 模拟_IIC_24C02\\Hardware\\Inc",
                 "E:\\Keil\\Keil_v5\\Keil5_MDK\\ARM\\ARMCC\\include",
                 "E:\\Keil\\Keil_v5\\Keil5_MDK\\ARM\\ARMCC\\include\\arm_linux",
                 "E:\\Keil\\Keil_v5\\Keil5_MDK\\ARM\\ARMCC\\include\\arm_linux_compat",
                 "E:\\Keil\\Keil_v5\\Keil5_MDK\\ARM\\ARMCC\\include\\rw",
-                "e:\\Github_warehouse\\Boot_Loader\\1-1 串口DMA接收\\Hardware\\Src"
+                "e:\\Github_warehouse\\Boot_Loader\\1-2 模拟_IIC_24C02\\Hardware\\Src"
             ],
             "defines": [
                 "USE_STDPERIPH_DRIVER",
