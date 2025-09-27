@@ -101,12 +101,9 @@ void USART1_IRQHandler(void)
         USART_GetFlagStatus(USART1,USART_FLAG_IDLE);    // 读取SR寄存器
         USART_ReceiveData(USART1);                      // 读取DR寄存器
         
-        //错误写法
-        //U0CB.URxCounter += U0_RX_SIZE - DMA_GetCurrDataCounter(DMA1_Channel5);  // 计算接收到的数据长度(DMA总量 - DMA剩余的量)
-        // U0CB.URxDataIN->end = &U0_RxBuff[U0CB.URxCounter - 1];
 
-        uint16_t receivedBytes = U0_RX_SIZE - DMA_GetCurrDataCounter(DMA1_Channel5);  // 计算接收到的数据长度(DMA总量 - DMA剩余的量)
-        U0CB.URxDataIN->end = U0CB.URxDataIN->start + receivedBytes - 1;
+         U0CB.URxCounter += U0_RX_SIZE - DMA_GetCurrDataCounter(DMA1_Channel5);  // 计算接收到的数据长度(DMA总量 - DMA剩余的量)
+         U0CB.URxDataIN->end = &U0_RxBuff[U0CB.URxCounter - 1];
 
 
 
@@ -130,6 +127,7 @@ void USART1_IRQHandler(void)
 
         DMA_Cmd(DMA1_Channel5, DISABLE);  // 关闭DMA
         DMA_SetCurrDataCounter(DMA1_Channel5, U0_RX_SIZE); 
+		DMA_SetCurrDataCounter(DMA1_Channel5, U0_RX_SIZE);
         DMA_Cmd(DMA1_Channel5, ENABLE);  // 重新开启DMA
 
     }
