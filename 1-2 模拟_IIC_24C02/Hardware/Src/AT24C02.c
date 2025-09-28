@@ -32,13 +32,14 @@ uint8_t AT24C02_WritePage(uint8_t addr,uint8_t *wdata)
     while(MyI2C_ReceiveAck());
     MyI2C_SendByte(addr);
     while(MyI2C_ReceiveAck());
-    for(i=0;i<8;i++)
+    for(i=0;i<8;i++)  // AT24C02页大小为8字节
     {
         MyI2C_SendByte(wdata[i]);
         while(MyI2C_ReceiveAck());
 
     }
     MyI2C_Stop();
+    Delay_ms(5);  // 等待写入完成，AT24C02需要5ms写入周期时间
     return 0;
 
 }

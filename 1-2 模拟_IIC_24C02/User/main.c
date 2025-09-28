@@ -15,17 +15,19 @@ int main(void)
 	AT24C02_Init();
 	uint16_t i;
 	
-	 for(i = 0; i < 256; i++)
-	 {
-	 	AT24C02_WriteByte(i, i);
-	 	Delay_ms(5);
-	 }
-	printf("demo_1\r\n");
+	printf("demo_1\r\n");	
+	//验证单个字节写入
+//	 for(i = 0; i < 256; i++)
+//	 {
+//	 	AT24C02_WriteByte(i, i);
+//	 	Delay_ms(5);
+//	 }
 
-//	for(i = 0;i<8;i++)
-//	{
-//	    AT24C02_WritePage(i*8,wdata_buff2);
-//	}
+	//验证页写入
+	for(i = 0;i<32;i++)  // 32页 × 8字节 = 256字节
+	{
+	    AT24C02_WritePage(i*8,wdata_buff2);  // 使用8字节数据，地址间隔8字节
+	}
 
 	AT24C02_ReadData(0,rdata_buff,256);
 	
