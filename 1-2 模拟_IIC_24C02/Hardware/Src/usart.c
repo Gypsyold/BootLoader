@@ -33,7 +33,7 @@ void USART1_Init(uint32_t baudrate)
     USART_Init(USART1, &USART_InitStructure);
 
     USART_DMACmd(USART1, USART_DMAReq_Rx, ENABLE);					    	// 使能USART1的DMA接收
-                                                // 使能USART1
+                                               
 
 
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);                         // 设置优先级分组为2
@@ -82,12 +82,7 @@ void U0Rx_PtrInit(void)
     U0CB.URxDataEND = &U0CB.URxDataPtr[NUM-1];
     U0CB.URxDataIN -> start = U0_RxBuff;
     U0CB.URxCounter = 0;
-    // // 初始化所有数据包管理结构
-    // for(int i = 0; i < NUM; i++)
-    // {
-    //     U0CB.URxDataPtr[i].start = U0_RxBuff;
-    //     U0CB.URxDataPtr[i].end = U0_RxBuff;
-    // }
+
 }
 
 
@@ -101,9 +96,11 @@ void USART1_IRQHandler(void)
         USART_GetFlagStatus(USART1,USART_FLAG_IDLE);    // 读取SR寄存器
         USART_ReceiveData(USART1);                      // 读取DR寄存器
         
+        
+        U0CB.URxCounter += U0_RX_SIZE - DMA_GetCurrDataCounter(DMA1_Channel5);  // 计算接收到的数据长度(DMA总量 - DMA剩余的量)
+        U0CB.URxDataIN->end = &U0_RxBuff[U0CB.URxCounter - 1];
 
-         U0CB.URxCounter += U0_RX_SIZE - DMA_GetCurrDataCounter(DMA1_Channel5);  // 计算接收到的数据长度(DMA总量 - DMA剩余的量)
-         U0CB.URxDataIN->end = &U0_RxBuff[U0CB.URxCounter - 1];
+        
 
 
 
@@ -120,14 +117,13 @@ void USART1_IRQHandler(void)
 
         }
         else{
-
             U0CB.URxDataIN -> start = U0_RxBuff;                     // 如果不够下一次单次传输最大量，则回到缓冲区起始地址                      
             U0CB.URxCounter = 0;                                     // 收到的数据长度也重新归零       
         }
 
         DMA_Cmd(DMA1_Channel5, DISABLE);  // 关闭DMA
-        DMA_SetCurrDataCounter(DMA1_Channel5, U0_RX_SIZE); 
-		DMA_SetCurrDataCounter(DMA1_Channel5, U0_RX_SIZE);
+        DMA1_Channel5->CMAR = (uint32_t)U0CB.URxDataIN->start;       // 重新设置DMA的内存地址
+        DMA_SetCurrDataCounter(DMA1_Channel5, U0_RX_SIZE);          
         DMA_Cmd(DMA1_Channel5, ENABLE);  // 重新开启DMA
 
     }
@@ -135,23 +131,14 @@ void USART1_IRQHandler(void)
 }
 
 
-
-void U0_printf(char * format, ...)
+// 重写fputc函数，实现printf到串口的重定向
+int fputc(int ch, FILE *f) 
 {
-    uint16_t i;
-    va_list listdata;
-    va_start(listdata, format);
-    vsprintf((char *)U0_TxBuff, format, listdata);
-    va_end(listdata);
-
-    for(i = 0; i < strlen((char *)U0_TxBuff); i++)
-    { 
-        while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) != SET);
-        USART_SendData(USART1, U0_TxBuff[i]);
-
-    }
-
-     while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) != SET);
-
+    USART_SendData(USART1, (uint8_t)ch);
+    while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+    return ch;
 }
+
+
+
 

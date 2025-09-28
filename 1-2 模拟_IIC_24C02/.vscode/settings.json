@@ -4,6 +4,8 @@
         "usart.h": "c",
         "stm32f10x_rcc.h": "c",
         "stdarg.h": "c",
-        "delay.h": "c"
+        "delay.h": "c",
+        "m24c02.h": "c",
+        "at24c02.h": "c"
     }
 }
