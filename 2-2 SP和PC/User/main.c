@@ -18,7 +18,7 @@ int main(void)
 		printf("heloo");
 	AT24C02_Init();
 	AT24C02_ReadOTAInfo();
-	BootLoader_Brance();
+	//BootLoader_Brance();
 
 	while (1)
 	{

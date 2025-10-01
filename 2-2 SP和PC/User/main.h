@@ -13,7 +13,7 @@
 #define STM32_A_SADDR        STM32_FLASH_SADDR + STM32_A_START_PAGE * STM32_PAGE_SIZE       //Flash中A区起始地址
 
 
-#define OTA_SET_FLAG      0x03020101
+#define OTA_SET_FLAG      0x03020100
 
 typedef struct 
 {
