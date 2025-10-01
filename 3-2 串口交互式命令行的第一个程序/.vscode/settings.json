@@ -1,0 +1,15 @@
+{
+    "files.associations": {
+        "stm32f10x.h": "c",
+        "usart.h": "c",
+        "stm32f10x_rcc.h": "c",
+        "stdarg.h": "c",
+        "delay.h": "c",
+        "m24c02.h": "c",
+        "at24c02.h": "c",
+        "w25q64.h": "c",
+        "main.h": "c",
+        "i2c.h": "c",
+        "boot.h": "c"
+    }
+}
