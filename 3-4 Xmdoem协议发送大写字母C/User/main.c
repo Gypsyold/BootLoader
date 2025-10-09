@@ -86,7 +86,7 @@ int main(void)
 		{
 		    if(UpDataA.XmodemTimer >= 100)
 			{
-				printf("C\r\n");
+				printf("C\n");
 				UpDataA.XmodemTimer = 0;
 
 
