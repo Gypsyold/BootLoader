@@ -19,3 +19,8 @@
 隔一个空格
 
 放你的axf路径
+
+放到Keil的USER中
+
+![](E:\Github_warehouse\Boot_Loader\Bin文件放置位置.png)
+
